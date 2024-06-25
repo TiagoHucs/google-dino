@@ -9,7 +9,9 @@ SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
 RUNNING = [pygame.image.load(os.path.join("assets/dino", "DinoRun1.png")),
            pygame.image.load(os.path.join("assets/dino", "DinoRun2.png"))]
+
 JUMPING = pygame.image.load(os.path.join("assets/dino", "DinoJump.png"))
+
 DUCKING = [pygame.image.load(os.path.join("assets/dino", "DinoDuck1.png")),
            pygame.image.load(os.path.join("assets/dino", "DinoDuck2.png"))]
 
@@ -30,6 +32,7 @@ DUCKING = [pygame.image.load(os.path.join("assets/dino", "DinoDuck1.png")),
 class Dinossaur:
     X_POS = 80
     Y_POS = 310
+    Y_POS_DUCK = 340
 
     def __init__(self):
         self.duck_img = DUCKING
@@ -65,13 +68,17 @@ class Dinossaur:
             self.dino_duck = True
             self.dino_run = False
             self.dino_jump = False
-        elif userInput[pygame.K_DOWN] and not self.dino_jump:
+        elif not (userInput[pygame.K_DOWN] or self.dino_jump):
             self.dino_duck = False
             self.dino_run = True
             self.dino_jump = False
     
     def duck(self):
-        pass
+        self.image = self.duck_img[self.step_index // 5]
+        self.dino_rect = self.image.get_rect()
+        self.dino_rect.x = self.X_POS
+        self.dino_rect.y = self.Y_POS_DUCK
+        self.step_index += 1
 
     def run(self):
         self.image = self.run_img[self.step_index // 5]
