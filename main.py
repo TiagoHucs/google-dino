@@ -1,12 +1,12 @@
 import pygame;
 import os;
+import random
 
 pygame.init();
 
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 RUNNING = [pygame.image.load(os.path.join("assets/dino", "DinoRun1.png")),
            pygame.image.load(os.path.join("assets/dino", "DinoRun2.png"))]
 
@@ -25,9 +25,25 @@ DUCKING = [pygame.image.load(os.path.join("assets/dino", "DinoDuck1.png")),
 #BIRD = [pygame.image.load(os.path.join("assets/Bird", "Bird1.png")),
 #        pygame.image.load(os.path.join("assets/Bird", "Bird2.png"))]
 
-#CLOUD = pygame.image.load(os.path.join("assets/Other", "Cloud.png"))
+CLOUD = pygame.image.load(os.path.join("assets/others", "Cloud.png"))
 
-#BG = pygame.image.load(os.path.join("assets/Other", "Track.png"))
+BG = pygame.image.load(os.path.join("assets/others", "Track.png"))
+
+class Cloud:
+    def __init__(self):
+        self.x = SCREEN_WIDTH + random.randint(800,1000)
+        self.y = random.randint(50,100)
+        self.image = CLOUD
+        self.width = self.image.get_width()
+
+    def update(self):
+        self.x -= game_speed
+        if self.x < -self.width:
+            self.x = SCREEN_WIDTH + random.randint(2500, 3000)
+            self.y = random.randint(50, 100)
+
+    def draw(self, SCREEN):
+        SCREEN.blit(self.image, (self.x, self.y))
 
 class Dinossaur:
     X_POS = 80
@@ -101,12 +117,38 @@ class Dinossaur:
     def draw(self, SCREEN):
         SCREEN.blit(self.image, (self.dino_rect.x, self.dino_rect.y))
 
-
-
 def main():
+    global game_speed, x_pos_bg, y_pos_bg, points
     run = True
     clock = pygame.time.Clock()
     player = Dinossaur()
+    cloud = Cloud()
+    game_speed = 14
+    x_pos_bg = 0
+    y_pos_bg = 380
+    points = 0
+    font = pygame.font.Font('freesansbold.ttf',20)
+
+    def score():
+        global points, game_speed
+        points += 1
+        if points % 100 == 0:
+            game_speed += 1
+
+        text = font.render("Points: " + str(points), True, (0, 0, 0))
+        textRect = text.get_rect()
+        textRect.center = (1000, 40)
+        SCREEN.blit(text, textRect)
+
+    def background():
+        global x_pos_bg, y_pos_bg
+        image_width = BG.get_width()
+        SCREEN.blit(BG, (x_pos_bg, y_pos_bg))
+        SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+        if x_pos_bg <= -image_width:
+            SCREEN.blit(BG, (image_width + x_pos_bg, y_pos_bg))
+            x_pos_bg = 0
+        x_pos_bg -= game_speed
 
     while run:
         for event in pygame.event.get():
@@ -119,8 +161,14 @@ def main():
         player.draw(SCREEN)
         player.update(userInput)
 
+        background()
+
+        score()
+
+        cloud.draw(SCREEN)
+        cloud.update()
+
         clock.tick(30)
         pygame.display.update()
-
 
 main()
