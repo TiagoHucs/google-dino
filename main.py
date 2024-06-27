@@ -2,8 +2,9 @@ import pygame;
 import os;
 import random
 
-pygame.init();
+pygame.init()
 
+FPS = 30
 SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 SCREEN = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
@@ -228,8 +229,8 @@ def main():
         cloud.draw(SCREEN)
         cloud.update()
 
-        clock.tick(30)
-        pygame.display.update()
+        clock.tick(FPS)
+        pygame.display.flip()
 
 #main()
 def menu(death_count):
@@ -251,7 +252,7 @@ def menu(death_count):
         textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 )
         SCREEN.blit(text, textRect)
         SCREEN.blit(RUNNING[0], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140 ))
-        pygame.display.update()
+        pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
