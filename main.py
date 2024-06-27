@@ -141,7 +141,7 @@ class SmallCactus(Obstacle):
 class LargeCactus(Obstacle):
     
     def __init__(self, image):
-        self.image = random.randint(0,2)
+        self.type = random.randint(0,2)
         super().__init__(image, self.type)
         self.rect.y = 300
 
@@ -152,7 +152,7 @@ class Bird(Obstacle):
         self.rect.y = 250
         self.index = 0
 
-    def draw(self):
+    def draw(self, SCREEN):
         if self.index >= 9:
             self.index = 0
         SCREEN.blit(self.image[self.index//5], self.rect)
@@ -170,6 +170,7 @@ def main():
     points = 0
     font = pygame.font.Font('freesansbold.ttf',20)
     obstacles = []
+    death_count = 0
 
     def score():
         global points, game_speed
@@ -215,7 +216,10 @@ def main():
             obstacle.draw(SCREEN)
             obstacle.update()
             if player.dino_rect.colliderect(obstacle.rect):
-                pygame.draw.rect(SCREEN, (255,0,0), player.dino_rect, 2)
+                #pygame.draw.rect(SCREEN, (255,0,0), player.dino_rect, 2)
+                pygame.time.delay(2000)
+                death_count += 1
+                menu(death_count)
 
         background()
 
@@ -227,4 +231,35 @@ def main():
         clock.tick(30)
         pygame.display.update()
 
-main()
+#main()
+def menu(death_count):
+    global points
+    run = True
+    while run:
+        SCREEN.fill((255,255,255))
+        font = pygame.font.Font('freesansbold.ttf',30)
+
+        if (death_count == 0):
+            text = font.render("Press any key to Start", True, (0,0,0))
+        elif (death_count > 0):
+            text = font.render("Press any key to Start", True, (0,0,0))
+            score = font.render("Score: " + str(points), True, (0,0,0))
+            scoreRect = score.get_rect()
+            scoreRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 50 )
+            SCREEN.blit(score, scoreRect)
+        textRect =  text.get_rect()
+        textRect.center = (SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 )
+        SCREEN.blit(text, textRect)
+        SCREEN.blit(RUNNING[0], (SCREEN_WIDTH // 2 - 20, SCREEN_HEIGHT // 2 - 140 ))
+        pygame.display.update()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                run = False
+            if event.type == pygame.KEYDOWN:
+                main()
+
+
+menu(death_count=0)
+
+    
